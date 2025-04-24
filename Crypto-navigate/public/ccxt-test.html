@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCXT Test</title>
+  <script src="https://unpkg.com/ccxt@latest/dist/ccxt.browser.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    pre {
+      background: #f0f0f0;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>CCXT Test Page</h1>
+  <div id="status">Verificando...</div>
+  <div id="result"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const statusEl = document.getElementById('status');
+      const resultEl = document.getElementById('result');
+
+      try {
+        // Verificar se o CCXT está carregado
+        if (typeof ccxt !== 'undefined') {
+          statusEl.innerHTML = '<strong style="color:green">CCXT carregado com sucesso!</strong>';
+          
+          // Exibir informações da biblioteca
+          const info = {
+            version: ccxt.version,
+            exchanges: ccxt.exchanges.length,
+            exchangesList: ccxt.exchanges.slice(0, 10) // Primeiros 10 apenas
+          };
+          
+          resultEl.innerHTML = `<h3>Informações do CCXT:</h3>
+            <pre>${JSON.stringify(info, null, 2)}</pre>
+            
+            <h3>Teste de Criação de Exchange:</h3>
+            <div id="exchange-test"></div>`;
+            
+          // Tentar criar uma instância de exchange
+          setTimeout(function() {
+            try {
+              const exchange = new ccxt.binance();
+              document.getElementById('exchange-test').innerHTML = 
+                `<pre style="color:green">Exchange criada com sucesso: ${exchange.id}</pre>`;
+            } catch (error) {
+              document.getElementById('exchange-test').innerHTML = 
+                `<pre style="color:red">Erro ao criar exchange: ${error.message}</pre>`;
+            }
+          }, 1000);
+          
+        } else {
+          statusEl.innerHTML = '<strong style="color:red">CCXT não está disponível!</strong>';
+          resultEl.innerHTML = '<pre>A biblioteca CCXT não foi carregada corretamente.</pre>';
+        }
+      } catch (error) {
+        statusEl.innerHTML = '<strong style="color:red">Erro ao verificar CCXT!</strong>';
+        resultEl.innerHTML = `<pre>Erro: ${error.message}</pre>`;
+      }
+    });
+  </script>
+</body>
+</html> 
